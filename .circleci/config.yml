@@ -15,15 +15,16 @@ jobs:
     steps:
       - checkout
       - run:
-          name: bundle install
+          name: "bundle install"
           command: bundle install --path vendor/bundle
       - run:
-          name: waiting DB start
+          name: "waiting DB start"
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
       - run:
-          name: initialize DB
-          command: bundle exec rails db:create
-          command: bundle exec rails db:migrate
+          name: "initialize DB"
+          command: |
+            bundle exec rake db:create
+            bundle exec rake db:migrate
       - run:
           name: RSpec
           command: bundle exec rspec
