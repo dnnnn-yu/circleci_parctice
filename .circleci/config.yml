@@ -17,9 +17,26 @@ jobs:
       - run:
           name: "bundle install"
           command: bundle install --path vendor/bundle
+      - save_cache:
+          key: bundle-{{ checksum "Gemfile.lock" }}-1
+          paths:
+            - vendor/bundle
+      - restore_cache:
+          name: "restore yarn cache"
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}-1
       - run:
           name: "waiting DB start"
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
+      - run:
+          name: "yarn install"
+          command: |
+            yarn install --cache-folder ~/.cache/yarn
+      - save_cache:
+          name: "save yarn cache"
+          key: yarn-packages-{{ checksum "yarn.lock" }}-1
+          paths:
+            - ~/.cache/yarn
       - run:
           name: "initialize DB"
           command: |
